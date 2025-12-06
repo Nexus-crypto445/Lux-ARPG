@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: lux-backend
-    env: node
-    rootDir: backend
-    plan: free
-    startCommand: "node server.js"
-    buildCommand: "npm install"
