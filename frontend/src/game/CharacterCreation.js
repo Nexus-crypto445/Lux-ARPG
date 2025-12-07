@@ -11,7 +11,7 @@ export default function CharacterCreation({ existing, onSaved }) {
   const [form, setForm] = useState(
     existing || {
       name: "",
-      level: 1, // ALWAYS LEVEL 1
+      level: 1, // ALWAYS level 1
       race: "",
       appearance: {
         skin: "#c58c5c",
@@ -33,7 +33,7 @@ export default function CharacterCreation({ existing, onSaved }) {
     }
   );
 
-  // Calculate remaining points
+  // Calculate remaining stat points
   const usedPoints =
     form.stats.strength +
     form.stats.agility +
@@ -43,7 +43,7 @@ export default function CharacterCreation({ existing, onSaved }) {
 
   const remaining = STAT_LIMIT - usedPoints;
 
-  // Change stat safely
+  // Safe stat change
   const changeStat = (stat, amount) => {
     const newValue = form.stats[stat] + amount;
 
@@ -55,23 +55,25 @@ export default function CharacterCreation({ existing, onSaved }) {
 
     setForm({
       ...form,
-      stats: {
-        ...form.stats,
-        [stat]: newValue,
-      },
+      stats: { ...form.stats, [stat]: newValue },
     });
   };
 
   const submit = async () => {
+    const payload = { ...form, level: 1 }; // LEVEL ALWAYS 1
+
     if (isEditing) {
-      await updateCharacter(existing.id, form);
+      await updateCharacter(existing.id, payload);
     } else {
-      await createCharacter(form);
+      await createCharacter(payload);
     }
-    onSaved(form);
+
+    onSaved(payload);
   };
 
+  // Starter Weapons
   const starterWeapons = [
+    // Physical
     "Whip",
     "Bow",
     "Staff",
@@ -81,25 +83,32 @@ export default function CharacterCreation({ existing, onSaved }) {
     "Great Axe",
     "Axe",
     "Wooden Katana",
+    "Shortsword",
+    "Longsword",
+    "Great Hammer",
+    "Spear",
+    "Dual Knives",
 
-    // Magic weapons
+    // Magic expanded list
     "Ember Wand",
     "Frost Wand",
     "Storm Wand",
     "Void Scepter",
     "Healing Rod",
     "Mana Baton",
-
-    // Physical weapons
-    "Shortsword",
-    "Longsword",
-    "Great Hammer",
-    "Spear",
-    "Dual Knives",
+    "Crystal Focus",
+    "Arcane Needle",
+    "Solar Tome",
+    "Lunar Tome",
+    "Inferno Catalyst",
+    "Glacier Orb",
+    "Thunder Charm",
+    "Chaos Rune",
+    "Spirit Branch",
   ];
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, color: "white" }}>
       <h2>{isEditing ? "Edit Character" : "Create Character"}</h2>
 
       {/* NAME */}
@@ -226,8 +235,7 @@ export default function CharacterCreation({ existing, onSaved }) {
         {starterWeapons.map((w) => (
           <option key={w}>{w}</option>
         ))}
-      </select>
-      <br /><br />
+      </select><br /><br />
 
       {/* DIVINE BLESSING */}
       <label>Divine Blessing:</label><br />
@@ -244,8 +252,7 @@ export default function CharacterCreation({ existing, onSaved }) {
         <option>Wind</option>
         <option>Light</option>
         <option>Shadow</option>
-      </select>
-      <br /><br />
+      </select><br /><br />
 
       {/* STATS */}
       <h3>Stats (Remaining: {remaining})</h3>
@@ -260,6 +267,7 @@ export default function CharacterCreation({ existing, onSaved }) {
       ))}
 
       <br />
+
       <button onClick={submit}>
         {isEditing ? "Save Changes" : "Create Character"}
       </button>

@@ -1,35 +1,33 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API routes
-const charRoutes = require("./routes/characters");
-app.use("/api/characters", charRoutes);
+let characters = [];
 
-// simple root
-app.get("/", (req, res) => {
-  res.send("Backend is running! Use /api/characters to manage characters.");
+app.get("/api/characters", (req, res) => {
+  res.json(characters);
 });
 
-// Add a convenience test route if you want
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Backend is working!" });
+app.post("/api/characters", (req, res) => {
+  const newChar = { id: Date.now(), ...req.body };
+  characters.push(newChar);
+  res.json(newChar);
 });
 
-// Serve frontend build if you want backend to serve static in single-service setups.
-// (Not used if you deploy frontend as Render Static Site.)
-const FRONTEND_BUILD = path.join(__dirname, "..", "frontend", "build");
-const fs = require("fs");
-if (fs.existsSync(FRONTEND_BUILD)) {
-  app.use(express.static(FRONTEND_BUILD));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(FRONTEND_BUILD, "index.html"));
-  });
-}
+app.put("/api/characters/:id", (req, res) => {
+  const id = Number(req.params.id);
+  characters = characters.map(c => (c.id === id ? req.body : c));
+  res.json(req.body);
+});
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.delete("/api/characters/:id", (req, res) => {
+  const id = Number(req.params.id);
+  characters = characters.filter(c => c.id !== id);
+  res.json({ success: true });
+});
+
+app.listen(3001, () => console.log("Backend running on port 3001"));
+
