@@ -1,19 +1,23 @@
 import React, { useState } from "react";
+
 import BootLogo from "./screens/BootLogo";
 import MainMenu from "./screens/MainMenu";
 import CharacterSlots from "./screens/CharacterSlots";
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState("boot");
+  const [stage, setStage] = useState("boot");
 
-  if (currentScreen === "boot") {
-    return <BootLogo onFinish={() => setCurrentScreen("menu")} />;
+  if (stage === "boot") {
+    return <BootLogo onFinish={() => setStage("menu")} />;
   }
 
-  if (currentScreen === "menu") {
-    return <MainMenu onPlay={() => setCurrentScreen("characters")} />;
+  if (stage === "menu") {
+    return <MainMenu onStart={() => setStage("characters")} />;
   }
 
-  return <CharacterSlots />;
+  if (stage === "characters") {
+    return <CharacterSlots />;
+  }
+
+  return null;
 }
-
