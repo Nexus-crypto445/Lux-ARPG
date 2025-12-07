@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
+const API_URL = "https://lux11-aarpg.onrender.com";
 function App() {
   return (
     <div className="App">
