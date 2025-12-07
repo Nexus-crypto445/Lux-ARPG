@@ -4,9 +4,16 @@ import MainMenu from "./screens/MainMenu";
 import CharacterSlots from "./screens/CharacterSlots";
 
 export default function App() {
-  const [phase, setPhase] = useState("boot"); // boot → menu → slots
+  const [currentScreen, setCurrentScreen] = useState("boot");
 
-  if (phase === "boot") return <BootLogo onContinue={() => setPhase("menu")} />;
-  if (phase === "menu") return <MainMenu onPlay={() => setPhase("slots")} />;
+  if (currentScreen === "boot") {
+    return <BootLogo onFinish={() => setCurrentScreen("menu")} />;
+  }
+
+  if (currentScreen === "menu") {
+    return <MainMenu onPlay={() => setCurrentScreen("characters")} />;
+  }
+
   return <CharacterSlots />;
 }
+
