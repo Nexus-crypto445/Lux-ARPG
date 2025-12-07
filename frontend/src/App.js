@@ -1,5 +1,5 @@
 import React from "react";
-import CharacterSlots from "./game/CharacterSlots";
+import CharacterSlots from "./components/CharacterSlots";
 import "./App.css";
 
 function App() {
