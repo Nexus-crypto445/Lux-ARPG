@@ -1,66 +1,68 @@
 import React, { useEffect, useState } from "react";
-import { fetchCharacters, deleteCharacter } from "../api/characters";
-import CharacterCreation from "./CharacterCreation";
+import TopDownScene from "../topdown/TopDownScene";
+import { getCharacters, updateCharacter } from "../API/characters";
 
 export default function CharacterSlots() {
-  const [chars, setChars] = useState([]);
-  const [editing, setEditing] = useState(null);
-  const [showCreate, setShowCreate] = useState(false);
+  const [characters, setCharacters] = useState([]);
+  const [playingCharacter, setPlayingCharacter] = useState(null);
 
-  async function load() {
-    const data = await fetchCharacters();
-    setChars(data.slice(0, 6)); // only up to 6 slots
+  useEffect(() => {
+    loadCharacters();
+  }, []);
+
+  async function loadCharacters() {
+    const data = await getCharacters();
+    setCharacters(data);
   }
 
-  useEffect(() => { load(); }, []);
+  function playCharacter(char) {
+    setPlayingCharacter(char);
+  }
 
-  const handleDelete = async (id) => {
-    await deleteCharacter(id);
-    await load();
-  };
+  function exitGame() {
+    setPlayingCharacter(null);
+    loadCharacters(); // reload in case stats changed
+  }
 
-  const onSaved = (newChar) => {
-    setEditing(null);
-    setShowCreate(false);
-    load();
-  };
-
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Your Characters (max 6)</h2>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        {Array.from({ length: 6 }).map((_, i) => {
-          const ch = chars[i];
-          return (
-            <div key={i} style={{ border: "1px solid #666", padding: 12, width: 200 }}>
-              {ch ? (
-                <>
-                  <div><strong>{ch.name}</strong></div>
-                  <div>{ch.class} - {ch.subclass}</div>
-                  <div>Lvl {ch.level}</div>
-                  <div style={{ marginTop: 8 }}>
-                    <button onClick={() => setEditing(ch)}>Edit</button>
-                    <button onClick={() => handleDelete(ch.id)} style={{ marginLeft: 8 }}>Delete</button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>Empty Slot</div>
-                  <button onClick={() => setShowCreate(true)}>Create</button>
-                </>
-              )}
-            </div>
-          );
-        })}
+  // If a character is selected, show the game scene
+  if (playingCharacter) {
+    return (
+      <div>
+        <button onClick={exitGame} style={{ margin: "10px" }}>
+          Exit Game
+        </button>
+        <TopDownScene character={playingCharacter} />
       </div>
+    );
+  }
 
-      {editing && <div style={{ marginTop: 20 }}>
-        <CharacterCreation existing={editing} onSaved={onSaved} />
-      </div>}
+  // Character selection screen
+  return (
+    <div style={{ textAlign: "center", color: "white" }}>
+      <h1>Your Characters</h1>
 
-      {showCreate && <div style={{ marginTop: 20 }}>
-        <CharacterCreation onSaved={onSaved} />
-      </div>}
+      <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+        {characters.map((char) => (
+          <div
+            key={char.id}
+            style={{
+              border: "2px solid white",
+              padding: "15px",
+              width: "200px",
+              background: "#333",
+            }}
+          >
+            <h2>{char.name}</h2>
+            <p>Strength: {char.stats.strength}</p>
+            <p>Agility: {char.stats.agility}</p>
+            <p>Intelligence: {char.stats.intelligence}</p>
+
+            <button onClick={() => playCharacter(char)}>
+              Play
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
