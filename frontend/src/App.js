@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "https://lux11-aarpg.onrender.com";
+const API_URL = "https://lux11-aarpg.onrender.com"; // your backend URL
 
 function App() {
   const [message, setMessage] = useState("Loading...");
