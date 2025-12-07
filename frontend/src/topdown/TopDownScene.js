@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { worldMap } from "../game/worldMap";
+import { worldMap } from "./worldMap";
 
 export default function TopDownScene({ character }) {
   const canvasRef = useRef(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import TopDownScene from "../game/TopDownScene";   // ✅ FIXED IMPORT
+import TopDownScene from "../topdown/TopDownScene";   // ✅ FIXED IMPORT
 import { getCharacters, updateCharacter } from "../api/characters";
 
 export default function CharacterSlots() {
