@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import TopDownScene from "../topdown/TopDownScene";   // ✅ FIXED IMPORT
-import { getCharacters, updateCharacter } from "../api/characters";
+import TopDownScene from "../topdown/TopDownScene";
+import { fetchCharacters, updateCharacter, deleteCharacter } from "../api/characters";
 
 export default function CharacterSlots() {
   const [characters, setCharacters] = useState([]);
@@ -11,8 +11,12 @@ export default function CharacterSlots() {
   }, []);
 
   async function loadCharacters() {
-    const data = await getCharacters();
-    setCharacters(data);
+    try {
+      const data = await fetchCharacters();
+      setCharacters(data);
+    } catch (error) {
+      console.error("Error loading characters:", error);
+    }
   }
 
   function playCharacter(char) {
@@ -21,43 +25,64 @@ export default function CharacterSlots() {
 
   function exitGame() {
     setPlayingCharacter(null);
-    loadCharacters(); // reload in case stats changed
+    loadCharacters();
   }
 
-  // If a character is selected, show the game scene
+  // If the player is in the game:
   if (playingCharacter) {
     return (
       <div>
-        <button onClick={exitGame} style={{ margin: "10px" }}>
+        <button
+          onClick={exitGame}
+          style={{ margin: 10, padding: "8px 18px", fontSize: 16 }}
+        >
           Exit Game
         </button>
+
         <TopDownScene character={playingCharacter} />
       </div>
     );
   }
 
-  // Character selection screen
+  // Character slot menu:
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <h1>Your Characters</h1>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+      {characters.length === 0 && <p>No characters yet.</p>}
+
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: 20,
+        flexWrap: "wrap"
+      }}>
         {characters.map((char) => (
           <div
             key={char.id}
             style={{
               border: "2px solid white",
-              padding: "15px",
-              width: "200px",
-              background: "#333",
+              padding: 15,
+              width: 220,
+              background: "#222",
+              borderRadius: 8
             }}
           >
             <h2>{char.name}</h2>
-            <p>Strength: {char.stats.strength}</p>
-            <p>Agility: {char.stats.agility}</p>
-            <p>Intelligence: {char.stats.intelligence}</p>
 
-            <button onClick={() => playCharacter(char)}>
+            <p><strong>Race:</strong> {char.race}</p>
+
+            <p><strong>Stats:</strong></p>
+            <p>STR: {char.stats.strength}</p>
+            <p>AGI: {char.stats.agility}</p>
+            <p>VIT: {char.stats.vitality}</p>
+            <p>INT: {char.stats.intelligence}</p>
+            <p>WIS: {char.stats.wisdom}</p>
+
+            <button
+              style={{ marginTop: 10, padding: "6px 12px" }}
+              onClick={() => playCharacter(char)}
+            >
               Play
             </button>
           </div>
