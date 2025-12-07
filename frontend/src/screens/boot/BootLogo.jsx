@@ -1,33 +1,15 @@
 import React, { useEffect } from "react";
-import "./boot.css"; // optional
+import "./boot.css";
 
-export default function BootLogo({ onFinish }) {
+export default function BootLogo({ onContinue }) {
   useEffect(() => {
-    const timer = setTimeout(onFinish, 2500);
+    const timer = setTimeout(onContinue, 2200);
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [onContinue]);
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        background: "black",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "90px",
-          color: "white",
-          fontFamily: "serif",
-          letterSpacing: "10px",
-        }}
-      >
-        LUX
-      </h1>
+    <div className="boot-container">
+      <h1 className="boot-text">L U X</h1>
     </div>
   );
 }
