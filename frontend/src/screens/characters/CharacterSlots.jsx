@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { fetchCharacters, deleteCharacter } from "../api/characters";
-import CharacterCreation from "./CharacterCreation";
 import TopDownScene from "../topdown/TopDownScene";
+import { fetchCharacters, updateCharacter, deleteCharacter } from "../api/characters";
 
 export default function CharacterSlots() {
   const [characters, setCharacters] = useState([]);
   const [playingCharacter, setPlayingCharacter] = useState(null);
-  const [creating, setCreating] = useState(false);
 
+  // Load characters on mount
   useEffect(() => {
     loadCharacters();
   }, []);
 
   async function loadCharacters() {
     try {
-      const data = await fetchCharacters();
+      const data = await fetchCharacters();  // ✅ FIXED
       setCharacters(data);
     } catch (err) {
       console.error("Error loading characters:", err);
@@ -27,10 +26,10 @@ export default function CharacterSlots() {
 
   function exitGame() {
     setPlayingCharacter(null);
-    loadCharacters();
+    loadCharacters(); // reload after leaving game
   }
 
-  // If currently playing a character
+  // In-game view
   if (playingCharacter) {
     return (
       <div>
@@ -40,42 +39,25 @@ export default function CharacterSlots() {
         >
           Exit Game
         </button>
+
         <TopDownScene character={playingCharacter} />
       </div>
     );
   }
 
-  // If creating a new character
-  if (creating) {
-    return <CharacterCreation onCreated={() => { setCreating(false); loadCharacters(); }} />;
-  }
-
-  // Default: character selection
+  // Character selection screen
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <h1>Your Characters</h1>
 
-      <button
-        onClick={() => setCreating(true)}
-        style={{
-          marginBottom: 20,
-          padding: "10px 24px",
-          fontSize: 18
-        }}
-      >
-        Create New Character
-      </button>
-
       {characters.length === 0 && <p>No characters yet.</p>}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 20,
-          flexWrap: "wrap"
-        }}
-      >
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: 20,
+        flexWrap: "wrap"
+      }}>
         {characters.map((char) => (
           <div
             key={char.id}
@@ -84,12 +66,13 @@ export default function CharacterSlots() {
               padding: 15,
               width: 220,
               background: "#222",
-              borderRadius: 8
+              borderRadius: 8,
             }}
           >
             <h2>{char.name}</h2>
-
             <p><strong>Race:</strong> {char.race}</p>
+
+            <p><strong>Stats:</strong></p>
             <p>STR: {char.stats.strength}</p>
             <p>AGI: {char.stats.agility}</p>
             <p>VIT: {char.stats.vitality}</p>
@@ -97,31 +80,10 @@ export default function CharacterSlots() {
             <p>WIS: {char.stats.wisdom}</p>
 
             <button
-              style={{
-                marginTop: 10,
-                padding: "6px 12px",
-                width: "100%"
-              }}
+              style={{ marginTop: 10, padding: "6px 12px" }}
               onClick={() => playCharacter(char)}
             >
               Play
-            </button>
-
-            <button
-              style={{
-                marginTop: 8,
-                padding: "6px 12px",
-                width: "100%",
-                background: "darkred",
-                color: "white",
-                border: "none"
-              }}
-              onClick={() => {
-                deleteCharacter(char.id);
-                loadCharacters();
-              }}
-            >
-              Delete
             </button>
           </div>
         ))}
