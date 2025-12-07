@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import TopDownScene from "../topdown/TopDownScene";
-import { fetchCharacters, updateCharacter, deleteCharacter } from "../api/characters";
+import TopDownScene from "../../topdown/TopDownScene";
+import { fetchCharacters, deleteCharacter } from "./characters";
 
 export default function CharacterSlots() {
   const [characters, setCharacters] = useState([]);
   const [playingCharacter, setPlayingCharacter] = useState(null);
 
+  // Load characters on mount
   useEffect(() => {
     loadCharacters();
   }, []);
@@ -14,8 +15,8 @@ export default function CharacterSlots() {
     try {
       const data = await fetchCharacters();
       setCharacters(data);
-    } catch (error) {
-      console.error("Error loading characters:", error);
+    } catch (err) {
+      console.error("Error loading characters:", err);
     }
   }
 
@@ -28,7 +29,7 @@ export default function CharacterSlots() {
     loadCharacters();
   }
 
-  // If the player is in the game:
+  // If they're in-game, show the world
   if (playingCharacter) {
     return (
       <div>
@@ -39,12 +40,12 @@ export default function CharacterSlots() {
           Exit Game
         </button>
 
-        <TopDownScene character={playingCharacter} />
+          <TopDownScene character={playingCharacter} />
       </div>
     );
   }
 
-  // Character slot menu:
+  // Character selection screen
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <h1>Your Characters</h1>
@@ -65,7 +66,7 @@ export default function CharacterSlots() {
               padding: 15,
               width: 220,
               background: "#222",
-              borderRadius: 8
+              borderRadius: 8,
             }}
           >
             <h2>{char.name}</h2>

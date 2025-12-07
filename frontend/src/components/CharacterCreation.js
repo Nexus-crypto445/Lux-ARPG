@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createCharacter, updateCharacter } from "../api/characters";
+import { createCharacter, updateCharacter } from "../screens/characters/characters";
 
 export default function CharacterCreation({ existing, onSaved }) {
   const isEditing = !!existing;
