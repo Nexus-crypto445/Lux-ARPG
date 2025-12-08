@@ -1,74 +1,87 @@
-import React, { useEffect, useState } from "react";
-import TopDownScene from "../topdown/TopDownScene";
-import { fetchCharacters, deleteCharacter } from "../characters";
+// src/screens/CharacterSlots.js
 
-export default function CharacterSlots({ onCreate, onCharacterSelected }) {
+import React, { useEffect, useState } from "react";
+import { fetchCharacters } from "../characters";
+import TopDownScene from "../topdown/TopDownScene";
+
+export default function CharacterSlots() {
   const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [playingCharacter, setPlayingCharacter] = useState(null);
 
   useEffect(() => {
-    load();
+    loadCharacters();
   }, []);
 
-  async function load() {
-    setLoading(true);
+  async function loadCharacters() {
     try {
       const data = await fetchCharacters();
-      setCharacters(Array.isArray(data) ? data : []);
+      setCharacters(data);
     } catch (err) {
-      console.error("Load characters error:", err);
-      setCharacters([]);
-    } finally {
-      setLoading(false);
+      console.error("Error loading characters:", err);
     }
   }
 
-  async function handleDelete(id) {
-    try {
-      await deleteCharacter(id);
-      await load();
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
+  function playCharacter(char) {
+    setPlayingCharacter(char);
+  }
+
+  function exitGame() {
+    setPlayingCharacter(null);
+    loadCharacters();
+  }
+
+  if (playingCharacter) {
+    return (
+      <div>
+        <button
+          onClick={exitGame}
+          style={{ padding: "10px", margin: "10px" }}
+        >
+          Exit Game
+        </button>
+
+        <TopDownScene character={playingCharacter} />
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: 20, color: "white", textAlign: "center" }}>
+    <div style={{ textAlign: "center", color: "white" }}>
       <h1>Your Characters</h1>
 
-      <div style={{ marginBottom: 12 }}>
-        <button onClick={onCreate} style={{ padding: "8px 12px", marginRight: 8 }}>
-          Create New Character
-        </button>
-        <button onClick={load} style={{ padding: "8px 12px" }}>
-          Refresh
-        </button>
-      </div>
+      {characters.length === 0 && <p>No characters created yet.</p>}
 
-      {loading && <div>Loading...</div>}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "20px",
+        flexWrap: "wrap"
+      }}>
+        {characters.map((char) => (
+          <div
+            key={char.id}
+            style={{
+              border: "2px solid white",
+              padding: 20,
+              width: 220,
+              background: "#222",
+              borderRadius: 10
+            }}
+          >
+            <h2>{char.name}</h2>
 
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
-        {characters.length === 0 && !loading && <div>No characters yet.</div>}
+            <p>STR: {char.stats.strength}</p>
+            <p>AGI: {char.stats.agility}</p>
+            <p>VIT: {char.stats.vitality}</p>
+            <p>INT: {char.stats.intelligence}</p>
+            <p>WIS: {char.stats.wisdom}</p>
 
-        {characters.map((ch) => (
-          <div key={ch.id} style={{
-            width: 240, padding: 12, background: "#222", border: "1px solid #444", borderRadius: 8
-          }}>
-            <div style={{ fontSize: 18, fontWeight: "bold" }}>{ch.name}</div>
-            <div style={{ marginTop: 6 }}>{ch.race} • Lvl {ch.level ?? 1}</div>
-
-            <div style={{ marginTop: 8, textAlign: "left" }}>
-              <div>STR: {ch.stats?.strength ?? "-"}</div>
-              <div>AGI: {ch.stats?.agility ?? "-"}</div>
-              <div>VIT: {ch.stats?.vitality ?? "-"}</div>
-              <div>INT: {ch.stats?.intelligence ?? "-"}</div>
-              <div>WIS: {ch.stats?.wisdom ?? "-"}</div>
-            </div>
-
-            <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between" }}>
-              <button onClick={() => onCharacterSelected(ch)} style={{ padding: "6px 10px" }}>Play</button>
-              <button onClick={() => handleDelete(ch.id)} style={{ padding: "6px 10px" }}>Delete</button>
-            </div>
+            <button
+              onClick={() => playCharacter(char)}
+              style={{ marginTop: 10 }}
+            >
+              Play
+            </button>
           </div>
         ))}
       </div>
