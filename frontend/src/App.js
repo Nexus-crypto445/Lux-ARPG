@@ -5,45 +5,19 @@ import CharacterSlots from "./screens/CharacterSlots";
 import TopDownScene from "./topdown/TopDownScene";
 
 export default function App() {
-  const [screen, setScreen] = useState("boot"); // boot -> menu -> slots -> create -> game
-  const [selectedChar, setSelectedChar] = useState(null);
+  const [screen, setScreen] = useState("boot");
 
-  if (screen === "boot") {
-    return <BootLogo onContinue={() => setScreen("menu")} />;
-  }
+  const goToMenu = () => setScreen("menu");
+  const goToSlots = () => setScreen("characters");
+  const goToGame = (character) => setScreen({ game: character });
 
-  if (screen === "menu") {
-    return <MainMenu onPlay={() => setScreen("slots")} />;
-  }
+  if (screen === "boot") return <BootLogo onFinish={goToMenu} />;
+  if (screen === "menu") return <MainMenu onPlay={goToSlots} />;
+  if (screen === "characters")
+    return <CharacterSlots onPlayCharacter={goToGame} />;
 
-  if (screen === "slots") {
-    return (
-      <CharacterSlots
-        onCreate={() => setScreen("create")}
-        onCharacterSelected={(char) => {
-          setSelectedChar(char);
-          setScreen("game");
-        }}
-      />
-    );
-  }
-
-  if (screen === "create") {
-    return (
-      <CharacterCreation
-        onSaved={() => setScreen("slots")}
-        onCancel={() => setScreen("slots")}
-      />
-    );
-  }
-
-  if (screen === "game") {
-    return (
-      <TopDownScene
-        character={selectedChar}
-        onExit={() => setScreen("slots")}
-      />
-    );
+  if (typeof screen === "object" && screen.game) {
+    return <TopDownScene character={screen.game} />;
   }
 
   return null;
