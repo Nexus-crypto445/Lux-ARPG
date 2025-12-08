@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createCharacter } from "../../api/characters";
+import { fetchCharacters, createCharacter, updateCharacter, deleteCharacter } from "../characters";
 
 export default function CharacterCreation({ onDone }) {
   const [name, setName] = useState("");
