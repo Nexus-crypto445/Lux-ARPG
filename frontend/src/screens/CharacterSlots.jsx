@@ -1,53 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { fetchCharacters } from "../characters";
+import TopDownScene from "../topdown/TopDownScene";
+import { fetchCharacters, deleteCharacter } from "../characters";
 
-export default function CharacterSlots({ onCharacterSelected }) {
+export default function CharacterSlots({ onCreate, onCharacterSelected }) {
   const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadCharacters();
+    load();
   }, []);
 
-  async function loadCharacters() {
+  async function load() {
+    setLoading(true);
     try {
       const data = await fetchCharacters();
-      setCharacters(data);
+      setCharacters(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Error loading characters:", err);
+      console.error("Load characters error:", err);
+      setCharacters([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await deleteCharacter(id);
+      await load();
+    } catch (err) {
+      console.error("Delete failed:", err);
     }
   }
 
   return (
-    <div style={{ textAlign: "center", color: "white" }}>
+    <div style={{ padding: 20, color: "white", textAlign: "center" }}>
       <h1>Your Characters</h1>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-        {characters.map((char) => (
-          <div
-            key={char.id}
-            style={{
-              border: "2px solid white",
-              padding: 15,
-              width: 220,
-              background: "#222",
-              borderRadius: 8,
-            }}
-          >
-            <h2>{char.name}</h2>
-            <p>Race: {char.race}</p>
+      <div style={{ marginBottom: 12 }}>
+        <button onClick={onCreate} style={{ padding: "8px 12px", marginRight: 8 }}>
+          Create New Character
+        </button>
+        <button onClick={load} style={{ padding: "8px 12px" }}>
+          Refresh
+        </button>
+      </div>
 
-            <p>STR: {char.stats.strength}</p>
-            <p>AGI: {char.stats.agility}</p>
-            <p>VIT: {char.stats.vitality}</p>
-            <p>INT: {char.stats.intelligence}</p>
-            <p>WIS: {char.stats.wisdom}</p>
+      {loading && <div>Loading...</div>}
 
-            <button
-              style={{ marginTop: 10, padding: "6px 12px" }}
-              onClick={() => onCharacterSelected(char)}
-            >
-              Play
-            </button>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+        {characters.length === 0 && !loading && <div>No characters yet.</div>}
+
+        {characters.map((ch) => (
+          <div key={ch.id} style={{
+            width: 240, padding: 12, background: "#222", border: "1px solid #444", borderRadius: 8
+          }}>
+            <div style={{ fontSize: 18, fontWeight: "bold" }}>{ch.name}</div>
+            <div style={{ marginTop: 6 }}>{ch.race} • Lvl {ch.level ?? 1}</div>
+
+            <div style={{ marginTop: 8, textAlign: "left" }}>
+              <div>STR: {ch.stats?.strength ?? "-"}</div>
+              <div>AGI: {ch.stats?.agility ?? "-"}</div>
+              <div>VIT: {ch.stats?.vitality ?? "-"}</div>
+              <div>INT: {ch.stats?.intelligence ?? "-"}</div>
+              <div>WIS: {ch.stats?.wisdom ?? "-"}</div>
+            </div>
+
+            <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between" }}>
+              <button onClick={() => onCharacterSelected(ch)} style={{ padding: "6px 10px" }}>Play</button>
+              <button onClick={() => handleDelete(ch.id)} style={{ padding: "6px 10px" }}>Delete</button>
+            </div>
           </div>
         ))}
       </div>

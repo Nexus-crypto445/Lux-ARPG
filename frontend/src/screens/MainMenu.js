@@ -3,26 +3,28 @@ import React from "react";
 export default function MainMenu({ onPlay }) {
   return (
     <div style={{
+      width: "100vw",
       height: "100vh",
-      background: "black",
-      color: "white",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
-      alignItems: "center"
+      alignItems: "center",
+      background: "#000",
+      color: "#fff",
+      fontFamily: "sans-serif"
     }}>
-      <h1 style={{ fontSize: "4rem", marginBottom: 40 }}>Lux</h1>
+      <h1 style={{ fontSize: 64, marginBottom: 32 }}>Lux</h1>
 
       <button
         onClick={onPlay}
         style={{
-          padding: "12px 28px",
-          fontSize: "1.5rem",
+          padding: "14px 28px",
+          fontSize: 20,
           cursor: "pointer",
-          borderRadius: 8,
           border: "2px solid white",
           background: "transparent",
-          color: "white"
+          color: "white",
+          borderRadius: 8
         }}
       >
         Play

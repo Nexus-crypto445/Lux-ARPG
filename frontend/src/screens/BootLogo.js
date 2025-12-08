@@ -4,22 +4,23 @@ export default function BootLogo({ onContinue }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onContinue();
-    }, 2000); // 2 seconds logo
+    }, 1600); // quick logo
 
     return () => clearTimeout(timer);
   }, [onContinue]);
 
   return (
     <div style={{
-      background: "black",
+      width: "100vw",
       height: "100vh",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      color: "white",
-      fontSize: "5rem",
-      fontFamily: "serif",
-      letterSpacing: "10px"
+      background: "#000",
+      color: "#fff",
+      fontFamily: "Cinzel, serif",
+      letterSpacing: "8px",
+      fontSize: 72,
     }}>
       Lux
     </div>
