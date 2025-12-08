@@ -1,30 +1,30 @@
 import React from "react";
 
-export default function MainMenu({ onPlay }) {
+export default function MainMenu({ onStart }) {
   return (
     <div
       style={{
+        width: "100vw",
         height: "100vh",
-        background: "#000",
+        background: "black",
         color: "white",
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         justifyContent: "center",
-        alignItems: "center"
       }}
     >
-      <h1 style={{ fontSize: 60, marginBottom: 40 }}>LUX</h1>
+      <h1 style={{ fontSize: "48px", marginBottom: "40px" }}>Lux</h1>
 
       <button
-        onClick={onPlay}
+        onClick={onStart}
         style={{
-          padding: "14px 40px",
-          fontSize: 24,
+          padding: "14px 32px",
+          fontSize: "20px",
+          border: "2px solid white",
+          background: "transparent",
+          color: "white",
           cursor: "pointer",
-          background: "white",
-          color: "black",
-          border: "none",
-          borderRadius: 8
         }}
       >
         Play
