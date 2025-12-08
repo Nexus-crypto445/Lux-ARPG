@@ -1,27 +1,25 @@
 import React, { useEffect } from "react";
 
-export default function BootLogo({ onFinish }) {
+export default function BootLogo({ onContinue }) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      onFinish();
-    }, 2000); // 2 seconds
+      onContinue();
+    }, 2000); // 2 seconds logo
 
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [onContinue]);
 
   return (
     <div style={{
-      width: "100vw",
+      background: "black",
       height: "100vh",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      background: "black",
       color: "white",
-      fontSize: "64px",
-      fontWeight: "bold",
-      fontFamily: "'Cinzel', serif",
-      letterSpacing: "6px",
+      fontSize: "5rem",
+      fontFamily: "serif",
+      letterSpacing: "10px"
     }}>
       Lux
     </div>
