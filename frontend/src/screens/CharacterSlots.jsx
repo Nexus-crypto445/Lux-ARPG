@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchCharacters } from "../api/characters";
+import { fetchCharacters } from "../characters";
 
 export default function CharacterSlots({ onCharacterSelected }) {
   const [characters, setCharacters] = useState([]);
